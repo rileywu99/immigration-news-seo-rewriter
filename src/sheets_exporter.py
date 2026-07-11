@@ -15,6 +15,7 @@ HEADERS = [
     "Source",
     "Original URL",
     "Original Title",
+    "Target Keywords (5)",
     "SEO Title",
     "Meta Description",
     "Focus Keyword",
@@ -62,22 +63,24 @@ def is_duplicate(worksheet, url: str) -> bool:
     return url in urls
 
 
-def export_article(worksheet, date_pt: str, article: dict, seo_data: dict) -> None:
+def export_article(worksheet, date_pt: str, article: dict, seo_data: dict, target_keywords: list[str] | None = None) -> None:
     if is_duplicate(worksheet, article["url"]):
         print(f"  [sheets] duplicate skipped: {article['url']}")
         return
 
     now_pt = datetime.now(pytz.timezone("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M PT")
     word_count = len(seo_data.get("rewritten_content", "").split())
+    keywords_str = ", ".join(target_keywords) if target_keywords else seo_data.get("focus_keyword", "")
 
     row = [
         date_pt,
         article.get("source", ""),
         article.get("url", ""),
         article.get("title", ""),
+        keywords_str,                          # Target Keywords (5)
         seo_data.get("seo_title", ""),
         seo_data.get("meta_description", ""),
-        seo_data.get("focus_keyword", ""),
+        target_keywords[0] if target_keywords else seo_data.get("focus_keyword", ""),  # Focus Keyword = #1
         seo_data.get("rewritten_content", ""),
         word_count,
         now_pt,

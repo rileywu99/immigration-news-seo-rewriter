@@ -6,6 +6,7 @@ import anthropic
 import pytz
 from dotenv import load_dotenv
 
+from src.keyword_analyzer import analyze_keywords
 from src.news_scraper import scrape_immigration_news
 from src.seo_rewriter import rewrite_for_seo
 from src.sheets_exporter import ensure_headers, export_article, get_worksheet
@@ -39,18 +40,24 @@ def main() -> None:
     articles = scrape_immigration_news(firecrawl_key)
     print(f"          Found {len(articles)} articles\n")
 
-    print("Step 3/3  Rewriting & exporting...")
+    print("Step 3/3  Keyword analysis → Rewrite → Export...")
     success = 0
     for i, article in enumerate(articles, 1):
         title_preview = article["title"][:65] + "…" if len(article["title"]) > 65 else article["title"]
         print(f"  [{i}/{len(articles)}] {title_preview}")
 
-        seo_data = rewrite_for_seo(client, article)
+        keywords = analyze_keywords(client, article)
+        if keywords:
+            print(f"          → keywords: {', '.join(keywords)}")
+        else:
+            print("          → keyword analysis failed, continuing without")
+
+        seo_data = rewrite_for_seo(client, article, target_keywords=keywords)
         if not seo_data:
             print("          → rewrite failed, skipped")
             continue
 
-        export_article(worksheet, today_pt, article, seo_data)
+        export_article(worksheet, today_pt, article, seo_data, target_keywords=keywords)
         print(f"          → ✓ exported  ({len(seo_data.get('rewritten_content','').split())} words)")
         success += 1
 
