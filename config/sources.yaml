@@ -1,0 +1,9 @@
+search_queries:
+  - "US immigration policy news today"
+  - "USCIS announcement update"
+  - "visa immigration latest news"
+  - "green card deportation policy"
+  - "immigration court ruling news"
+
+max_articles: 5
+min_content_length: 300
