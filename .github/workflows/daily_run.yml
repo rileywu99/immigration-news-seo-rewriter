@@ -1,11 +1,7 @@
-name: Daily Immigration News SEO Rewriter
+name: Run Immigration News SEO Rewriter
 
 on:
-  schedule:
-    # 8:00 AM PDT (UTC-7) = 15:00 UTC  |  8:00 AM PST (UTC-8) = 16:00 UTC
-    # Using 15:00 UTC — runs at 8 AM during daylight saving time
-    - cron: "0 15 * * *"
-  workflow_dispatch: # allow manual trigger from GitHub UI
+  workflow_dispatch: # manual trigger only — run from GitHub Actions tab when needed
 
 jobs:
   rewrite:
